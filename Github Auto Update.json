@@ -1,0 +1,177 @@
+{
+  "name": "Github Auto Update",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "github-html-deploy",
+        "options": {}
+      },
+      "name": "GitHub Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        560
+      ],
+      "id": "6af1feac-5e0f-4650-9c12-8c1de519b609",
+      "webhookId": "79b9921e-6441-42a9-b242-50074703d7d4"
+    },
+    {
+      "parameters": {
+        "command": "cd /home/WebPrivate/web/panel.wifikos.com/public_html && git pull origin main"
+      },
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        48,
+        560
+      ],
+      "id": "924a4e05-5e1e-492e-b8c1-e206c7558996",
+      "name": "Execute a command",
+      "credentials": {
+        "sshPassword": {
+          "id": "HmRCUzhXaSG1WEUa",
+          "name": "SSH Password account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "419e712f-b280-4e4d-8e72-f954acfa64df",
+              "leftValue": "={{$json[\"code\"]}}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        256,
+        560
+      ],
+      "id": "88c89e07-4fd6-43a7-ab40-eefeb1793a3b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "693497580",
+        "text": "=✅ DEPLOY BERHASIL\n\n📦 Repo: Panel-Akses\n🌿 Branch: main\n🌐 Domain: panel.wifikos.com\n👤 User: syafiizaa\n\n🕒 Waktu:\n{{$now}}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        464
+      ],
+      "id": "1d5dabc9-0570-4cc1-b133-d7674e8a1a4b",
+      "name": "Send a text message",
+      "webhookId": "f68de159-8867-459d-8084-fc3f37b9559f",
+      "credentials": {
+        "telegramApi": {
+          "id": "QUQ6sgKcHNeIFyB2",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "693497580",
+        "text": "=❌ DEPLOY GAGAL\n\n📦 Repo: Panel-Akses\n🌿 Branch: main\n👤 User: syafiizaa\n\n🚨 Error:\n{{$json[\"stderr\"]}}\n\n🕒 Waktu:\n{{$now}}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        608
+      ],
+      "id": "fbb53997-ce0c-49fb-a1fe-9c9ee6d77081",
+      "name": "Send a text message1",
+      "webhookId": "f68de159-8867-459d-8084-fc3f37b9559f",
+      "credentials": {
+        "telegramApi": {
+          "id": "QUQ6sgKcHNeIFyB2",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GitHub Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a command": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b45c5731-2c8a-4603-946e-24e83a65c510",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6907f51774eecc65b1e96d4e39f06e1af7e38b8d5c9b287277a2d066b967d9b8"
+  },
+  "id": "qXjdPBDu86EDD2vx",
+  "tags": []
+}
